@@ -1,4 +1,6 @@
 import { Client } from "colyseus.js";
 
-export const colyseusSDK = new Client(`${location.protocol}//${location.host}/colyseus`);
-
+export const colyseusSDK = new Client(
+  import.meta.env.VITE_COLYSEUS_URL ||
+    `${location.protocol}//${location.host}/colyseus`
+);
