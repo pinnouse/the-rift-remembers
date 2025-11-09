@@ -8,10 +8,14 @@
     "node": ">= 16.13.0"
   },
   "scripts": {
-    "start": "tsx watch src/server.ts",
+  "prestart": "npm run tsoa:routes && npm run tsoa:spec",
+  "start": "tsx watch src/server.ts",
     "loadtest": "tsx loadtest/example.ts --room my_room --numClients 2",
     "build": "npm run clean && tsc",
     "clean": "rimraf build",
+    "tsoa:spec": "tsoa spec --out build/swagger.json",
+    "tsoa:routes": "tsoa routes --out build/routes.ts",
+    "docs:serve": "node ./build/docs-server.js || true",
     "test": "mocha -r tsx test/**_test.ts --exit --timeout 15000"
   },
   "author": "",
@@ -25,8 +29,10 @@
     "@colyseus/testing": "^0.16.0",
     "@types/express": "^4.17.1",
     "@types/mocha": "^10.0.1",
+    "@types/swagger-ui-express": "^4.1.8",
     "mocha": "^10.2.0",
     "rimraf": "^5.0.0",
+    "tsoa": "^4.0.0",
     "tsx": "^4.10.2",
     "typescript": "^5.0.4"
   },
@@ -35,6 +41,7 @@
     "@colyseus/playground": "^0.16.0",
     "@colyseus/tools": "^0.16.0",
     "colyseus": "^0.16.0",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "swagger-ui-express": "^4.6.3"
   }
 }

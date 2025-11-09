@@ -24,6 +24,12 @@ npm start
 - `tsconfig.json`: TypeScript configuration file
 
 
+## Env Variables to set
+```bash
+RIOT_KEY=<RIOT_API_KEY>
+```
+
+
 ## License
 
 MIT
