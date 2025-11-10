@@ -65,10 +65,13 @@ export async function getSummonerIconByNameTag(
 
   const accountUrl = `https://americas.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(
     gameName
-  )}/${encodeURIComponent(tagLine)}`;
+  )}/${encodeURIComponent(tagLine)}?${RIOT_KEY}`;
+
+  const headers = new Headers();
+  headers.append("X-Riot-Token", RIOT_KEY);
 
   const accountResp = await fetch(accountUrl, {
-    headers: { Authorization: `Bearer ${RIOT_KEY}` },
+    headers,
   });
 
   if (accountResp.status === 404)
@@ -90,12 +93,12 @@ export async function getSummonerIconByNameTag(
   if (!puuid)
     throw { status: 502, message: "Unexpected account response from Riot" };
 
-  const summonerUrl = `https://americas.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${encodeURIComponent(
+  const summonerUrl = `https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${encodeURIComponent(
     puuid
   )}`;
 
   const summonerResp = await fetch(summonerUrl, {
-    headers: { Authorization: `Bearer ${RIOT_KEY}` },
+    headers,
   });
 
   if (!summonerResp.ok) {

@@ -10,14 +10,12 @@ export class Player extends Schema {
 
   constructor(
     sessionId: string = "",
-    userId: string = "",
-    summonerIconId: number = 0,
+    summonerIconUrl: string = "",
     name: string = ""
   ) {
     super();
     this.sessionId = sessionId;
-    this.userId = userId;
-    this.summonerIconId = summonerIconId;
+    this.summonerIconUrl = summonerIconUrl;
     this.name = name;
   }
 }
