@@ -1,13 +1,20 @@
 import "./index.css";
 import type { MyRoomState } from "server:rooms/schema/MyRoomState";
-import { Room } from "colyseus.js";
 import kaplay, { type KAPLAYCtx } from "kaplay";
 import { colyseusSDK } from "./core/colyseus";
 import { createLobbyScene } from "./scenes/lobby";
 import Button from "./shared/components/button";
 
 // Initialize kaplay
-export const k = kaplay({ background: "20252e" });
+export const k = kaplay({
+	width: 1600,
+	height: 1000,
+	stretch: true,
+	crisp: false,
+	pixelDensity: 2,
+	letterbox: true,
+	background: "20252e"
+});
 
 // Create all scenes
 createLobbyScene();
