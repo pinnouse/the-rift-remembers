@@ -9,11 +9,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-      
-      - name: Move client directory contents to root
-        run: |
-          mv kaplay/client/* .
-          rm -rf kaplay
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
@@ -21,13 +16,15 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
+        working-directory: ./kaplay/client
         run: npm install
 
       - name: Build the project
+        working-directory: ./kaplay/client
         run: npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./kaplay/client/dist
