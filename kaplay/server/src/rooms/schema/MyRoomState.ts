@@ -1,12 +1,23 @@
-import { Schema, MapSchema, type } from "@colyseus/schema";
+import { MapSchema, Schema, type, view } from "@colyseus/schema";
 
 export class Player extends Schema {
   @type("string") public sessionId: string;
-  @type("string") public userId: string;
-  @type("string") public avatar: string;
+  @type("string") public summonerIconUrl: string;
   @type("string") public name: string;
-  @type("number") public x: number = 0;
-  @type("number") public y: number = 0;
+
+  // following properties will not be sent to the client
+  @view() @type("string") protected puuid: string;
+
+  constructor(
+    sessionId: string = "",
+    summonerIconUrl: string = "",
+    name: string = ""
+  ) {
+    super();
+    this.sessionId = sessionId;
+    this.summonerIconUrl = summonerIconUrl;
+    this.name = name;
+  }
 }
 
 export class MyRoomState extends Schema {

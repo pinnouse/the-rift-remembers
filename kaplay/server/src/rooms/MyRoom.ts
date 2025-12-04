@@ -1,8 +1,6 @@
-import { Room, Client } from "@colyseus/core";
+import { type Client, Room } from "@colyseus/core";
+import { getSummonerIconByNameTag } from "../services/riotService";
 import { MyRoomState, Player } from "./schema/MyRoomState";
-
-// list of avatars
-const avatars = ['glady', 'dino', 'bean', 'bag', 'btfly', 'bobo', 'ghostiny', 'ghosty', 'mark'];
 
 const ADJECTIVES = [
   "silly",
@@ -11,6 +9,10 @@ const ADJECTIVES = [
   "big",
   "tiny",
   "angry",
+  "fast",
+  "rich",
+  "brave",
+  "clever",
 ];
 
 const NOUNS = [
@@ -21,6 +23,9 @@ const NOUNS = [
   "poro",
   "tower",
   "wolf",
+  "dragon",
+  "baron",
+  "nexus",
 ];
 
 function randomPickOne(arr: string[]): string {
@@ -34,12 +39,16 @@ export class MyRoom extends Room<MyRoomState> {
   state = new MyRoomState();
 
   generateRoomIdSingle(): string {
-    return randomPickOne(ADJECTIVES) + randomPickOne(NOUNS) + Math.round(Math.random() * 100);
+    return (
+      randomPickOne(ADJECTIVES) +
+      randomPickOne(NOUNS) +
+      Math.round(Math.random() * 100)
+    );
   }
 
   async generateRoomId(): Promise<string> {
     const currentIds = await this.presence.smembers(this.LOBBY_CHANNEL);
-    let id;
+    let id: string;
     do {
       id = this.generateRoomIdSingle();
     } while (currentIds.includes(id));
@@ -48,11 +57,11 @@ export class MyRoom extends Room<MyRoomState> {
     return id;
   }
 
-  async onCreate (options: any) {
+  async onCreate(options: any) {
     this.onMessage("move", (client, message) => {
-      const player = this.state.players.get(client.sessionId);
-      player.x = message.x;
-      player.y = message.y;
+    //   const player = this.state.players.get(client.sessionId);
+    //   player.x = message.x;
+    //   player.y = message.y;
     });
 
     this.onMessage("type", (client, message) => {
@@ -62,26 +71,33 @@ export class MyRoom extends Room<MyRoomState> {
     });
 
     this.roomId = await this.generateRoomId();
-    console.log('assigned room', this.roomId);
+    console.log("assigned room", this.roomId);
   }
 
-  onJoin (client: Client, options: any) {
-    console.log(client.sessionId, "joined!");
-    if (typeof this.state.owner === "undefined" || this.state.owner.length === 0) {
+  async onJoin(client: Client, options: any) {
+    // console.log(client.sessionId, "joined!", options);
+    if (
+      typeof this.state.owner === "undefined" ||
+      this.state.owner.length === 0
+    ) {
       this.state.owner === client.sessionId;
+	  console.log("assigned owner:", client.sessionId, options.nameTag);
     }
+    // client.view = new StateView();
 
     const player = new Player();
-    player.x = Math.floor(Math.random() * 400);
-    player.y = Math.floor(Math.random() * 400);
     player.sessionId = client.sessionId;
     // get a random avatar for the player
-    player.avatar = avatars[Math.floor(Math.random() * avatars.length)];
+    // player.avatar = avatars[Math.floor(Math.random() * avatars.length)];
+    player.summonerIconUrl = (
+      await getSummonerIconByNameTag(options.nameTag)
+    ).iconUrl;
+    player.name = options.name || "Anonymous";
 
     this.state.players.set(client.sessionId, player);
   }
 
-  onLeave (client: Client, consented: boolean) {
+  onLeave(client: Client, consented: boolean) {
     console.log(client.sessionId, "left!");
 
     this.state.players.delete(client.sessionId);
@@ -91,5 +107,4 @@ export class MyRoom extends Room<MyRoomState> {
     console.log("room", this.roomId, "disposing...");
     this.presence.srem(this.LOBBY_CHANNEL, this.roomId);
   }
-
 }
