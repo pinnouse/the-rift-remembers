@@ -15,8 +15,12 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Install dependencies
+      - name: Install dependencies (client)
         working-directory: ./kaplay/client
+        run: npm install
+
+      - name: Install dependencies (server)
+        working-directory: ./kaplay/server
         run: npm install
 
       - name: Build the project
