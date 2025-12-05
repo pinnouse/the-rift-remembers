@@ -28,7 +28,7 @@ jobs:
         run: npm run build
 
       - name: Run tree command ignoring node_modules
-        run: tree ./ --ignore node_modules
+        run: tree -I node_modules
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
